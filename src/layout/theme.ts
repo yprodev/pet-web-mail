@@ -1,6 +1,6 @@
-import { createTheme } from '@mui/material/styles'
+import { createTheme, Theme } from '@mui/material/styles'
 
-const theme = createTheme({
+const theme: Theme = createTheme({
   typography: {
     fontFamily: [
       '-apple-system',
@@ -17,7 +17,11 @@ const theme = createTheme({
   },
   palette: {
     background: {
-      default: '#c8c8c8',
+      default: '#f5f5f6',
+      paper: '#263142',
+    },
+    common: {
+      white: '#ffffff',
     },
   },
   spacing: (factor: number) => `${0.25 * factor}rem`,

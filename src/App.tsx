@@ -12,7 +12,10 @@ function App() {
       <Grid
         container
         sx={{
-          bgcolor: 'background.paper',
+          display: 'flex',
+          alignItems: 'stretch',
+          height: '100vh',
+          bgcolor: 'background.default',
         }}
       >
         <Aside />
