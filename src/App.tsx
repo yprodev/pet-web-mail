@@ -1,10 +1,15 @@
+import { ThemeProvider } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
+
+import { theme } from './layout'
 import { Aside } from './components'
 
 function App() {
   return (
-    <section className='mainScreen'>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Aside />
-    </section>
+    </ThemeProvider>
   )
 }
 
