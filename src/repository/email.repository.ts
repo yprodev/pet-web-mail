@@ -1,8 +1,9 @@
-import { httpClientOptions } from '../config'
-import { initializeHttpClient } from '../service'
+// import { httpClientOptions } from '../config'
+// import { initializeHttpClient } from '../service'
 
-const repositoryEmail = () => {
-  const httpClient = initializeHttpClient(httpClientOptions)
-
+const initRepositoryEmail = () => {
+  // const httpClient = initializeHttpClient(httpClientOptions)
   //TODO: Need to define the observable
 }
+
+export default initRepositoryEmail

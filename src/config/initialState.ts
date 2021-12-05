@@ -1,6 +1,6 @@
-import { InitialState } from '../types'
+import { AppState } from '../app-types'
 
-const initialState: InitialState = {
+const initialState: AppState = {
   emails: [],
   loading: false,
   error: '',

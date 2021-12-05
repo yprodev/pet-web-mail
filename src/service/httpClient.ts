@@ -1,9 +1,10 @@
-import axios, { AxiosRequestConfig, AxiosInstance } from 'axios'
+import axios from 'axios'
+import { InitHttpClient } from '../types'
 
-const initializeHttpClient = (config: AxiosRequestConfig): AxiosInstance => {
+const initHttpClient: InitHttpClient = (config) => {
   const httpClient = axios.create(config)
 
   return httpClient
 }
 
-export default initializeHttpClient
+export default initHttpClient
