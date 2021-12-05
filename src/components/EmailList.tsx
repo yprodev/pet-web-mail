@@ -19,7 +19,7 @@ const EmailList: FC<EmailListProps> = () => {
         }}
       />
       <EmailItem
-        key='one'
+        key='two'
         {...{
           from: 'Elizabeth Tailor',
           date: '13/09',

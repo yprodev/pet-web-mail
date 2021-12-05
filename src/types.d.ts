@@ -9,3 +9,13 @@ export interface Email {
     message: string
   }
 }
+
+export interface ResourceEmail {
+  list(client: AxiosInstance): Promise<AxiosResponse<Email[]>>
+}
+
+export interface InitialState {
+  emails: Email[]
+  loading: boolean
+  error: string
+}

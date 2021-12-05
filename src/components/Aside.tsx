@@ -14,7 +14,11 @@ const buttonStyle: SxProps<Theme> = {
 
 const Aside: FC<AsideProps> = () => {
   return (
-    <Grid item xs={2} sx={{ display: 'flex', flexDirection: 'column', pt: 8, bgcolor: 'background.paper' }}>
+    <Grid
+      item
+      xs={2}
+      sx={{ display: 'flex', flexDirection: 'column', pt: 8, bgcolor: 'background.paper' }}
+    >
       <Button
         sx={{
           ...buttonStyle,
@@ -30,7 +34,7 @@ const Aside: FC<AsideProps> = () => {
       <Button sx={buttonStyle} key='three'>
         Sent
       </Button>
-      <Button sx={buttonStyle} key='three'>
+      <Button sx={buttonStyle} key='four'>
         Trash
       </Button>
     </Grid>
