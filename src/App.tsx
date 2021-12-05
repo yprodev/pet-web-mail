@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid'
 import CssBaseline from '@mui/material/CssBaseline'
 
 import { theme } from './layout'
-import { Aside } from './components'
+import { Aside, EmailList, ViewArea } from './components'
 
 function App() {
   return (
@@ -16,12 +16,8 @@ function App() {
         }}
       >
         <Aside />
-        <Grid item xs={3} sx={{ outline: '1px solid red' }}>
-          stack
-        </Grid>
-        <Grid item xs={7} sx={{ outline: '1px solid green' }}>
-          view area
-        </Grid>
+        <EmailList />
+        <ViewArea />
       </Grid>
     </ThemeProvider>
   )
