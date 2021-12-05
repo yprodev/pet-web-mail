@@ -15,6 +15,11 @@ const theme = createTheme({
       '"Segoe UI Symbol"',
     ].join(','),
   },
+  palette: {
+    background: {
+      default: '#c8c8c8',
+    },
+  },
   spacing: (factor: number) => `${0.25 * factor}rem`,
 })
 
