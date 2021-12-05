@@ -7,7 +7,7 @@ interface ViewAreaProps {}
 
 const ViewArea: FC<ViewAreaProps> = () => {
   return (
-    <Grid item xs={7} sx={{ outline: '1px solid green', bgcolor: 'Background.default' }}>
+    <Grid item xs={7} sx={{ bgcolor: 'Background.default' }}>
       <ViewAreaToolbar />
     </Grid>
   )

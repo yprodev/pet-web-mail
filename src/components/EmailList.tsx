@@ -7,7 +7,7 @@ interface EmailListProps {}
 
 const EmailList: FC<EmailListProps> = () => {
   return (
-    <Grid item xs={3} sx={{ bgcolor: 'common.white' }}>
+    <Grid item xs={3} sx={{ bgcolor: 'common.white', boxShadow: '1px 0 3px rgba(0, 0, 0, 0.1)' }}>
       <EmailItem
         key='one'
         {...{
