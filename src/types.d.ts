@@ -1,23 +1,42 @@
+import { FolderTypes } from './enums/folder-types.enum'
+
 export interface Email {
   id: string
+  meta: {
+    isRead: boolean
+    folder: string
+  }
   header: {
     subject: string
     from: string
-    data: number //FIXME: Date type in UTC format
+    date: number //FIXME: Date type in UTC format
+    preview: string
   }
-  body: {
+}
+
+export interface EmailFull {
+  id: string
+  content: {
+    attachments: []
     message: string
   }
 }
 
 export type InitHttpClient = (config: AxiosRequestConfig) => AxiosInstance
 
-export type OFuncList = (emails: Email[]) => void
-export type OFuncListing = (status: boolean) => void
-export type OFuncError = (msg: string) => void
-export type OFuncSetStateNext = (payload: EmailPayload) => void
-export type OFuncSubjectGetter = () => BehaviorSubject<AppState>
+export type ListEmails = (componentDestroyed: Subject<void>) => void
+export type SetReadState = (emailId: string, status: boolean) => void
+export type EmailsRequest = () => Observable<Email[]>
+export type FoldersRequest = () => Observable<FolderTypes[]>
 
-export interface ResourceEmail {
-  list(client: AxiosInstance): Promise<AxiosResponse<Email[]>>
-}
+export type UpdateSelectedFolder = (folderName: FolderTypes) => void
+export type GetFullEmail = (emailId: string) => Observable<EmailFull>
+export type ListSelectedEmailsSubscription = (
+  selectedFolders$: Observable<FolderTypes>,
+  componentDestroyed: Subject<void>,
+  stateSetter: Dispatch<SetStateAction<Email[]>>
+) => void
+export type ListFoldersSubscription = (
+  componentDestroyed: Subject<void>,
+  stateSetter: Dispatch<SetStateAction<FolderTypes[]>>
+) => void

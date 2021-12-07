@@ -4,19 +4,22 @@ import Grid from '@mui/material/Grid'
 import CssBaseline from '@mui/material/CssBaseline'
 
 import { theme } from './layout'
-import { initRepositoryEmail } from './repository'
-import { useObservable } from './hook'
 import { Aside, EmailList, ViewArea } from './components'
+import { listEmails } from './selectors'
+import { Subject } from 'rxjs'
 
 function App() {
-  const emailRepository = initRepositoryEmail()
-  const emailState = useObservable(emailRepository.getEmailObservable())
-
+  //Move into a custom hook
   useEffect(() => {
-    emailRepository.list()
-  }, [])
+    const componentDestroyed = new Subject<void>()
 
-  console.log('email state', emailState)
+    listEmails(componentDestroyed)
+
+    return () => {
+      componentDestroyed.next()
+      componentDestroyed.complete()
+    }
+  }, [])
 
   return (
     <ThemeProvider theme={theme}>

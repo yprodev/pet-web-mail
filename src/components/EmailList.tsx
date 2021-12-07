@@ -1,33 +1,44 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
+import { Subject } from 'rxjs'
 import Grid from '@mui/material/Grid'
 
+import { Email } from '../types'
+import { selectedFolder$ } from '../observables'
+import { displayFullEmail, listSelectedEmails } from '../selectors'
 import { EmailItem } from '.'
 
 interface EmailListProps {}
 
 const EmailList: FC<EmailListProps> = () => {
+  const [emails, setEmails] = useState<Email[]>([])
+
+  //TODO: useCallback
+  const handleEmailDisplay = (emailId: string) => {
+    displayFullEmail(emailId)
+  }
+
+  useEffect(() => {
+    const componentDestroyed$ = new Subject<void>()
+
+    listSelectedEmails(selectedFolder$, componentDestroyed$, setEmails)
+
+    return () => {
+      componentDestroyed$.next()
+      componentDestroyed$.complete()
+    }
+  }, [])
+
   return (
     <Grid item xs={3} sx={{ bgcolor: 'common.white', boxShadow: '1px 0 3px rgba(0, 0, 0, 0.1)' }}>
-      <EmailItem
-        key='one'
-        {...{
-          from: 'Michael Scout',
-          date: 'yesterday',
-          subject: 'Please, call me!',
-          preview: 'We need to have a meet-up',
-          isRead: false,
-        }}
-      />
-      <EmailItem
-        key='two'
-        {...{
-          from: 'Elizabeth Tailor',
-          date: '13/09',
-          subject: 'Please, call me again!',
-          preview: 'We need to have a meet-up once more',
-          isRead: false,
-        }}
-      />
+      {emails.map((email: Email, idx: number) => (
+        <EmailItem
+          handleClick={handleEmailDisplay}
+          key={idx}
+          identifier={email.id}
+          isRead={email.meta.isRead}
+          {...email.header}
+        />
+      ))}
     </Grid>
   )
 }

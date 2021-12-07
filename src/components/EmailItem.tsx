@@ -4,16 +4,30 @@ import { Typography } from '@mui/material'
 import CircleIcon from '@mui/icons-material/Circle'
 
 interface EmailItemProps {
+  identifier: string
   from: string
-  date: string //FIXME: Should be date of UTC format
+  date: number //FIXME: Should be date of UTC format
   subject: string
   isRead: boolean
   preview: string
+  handleClick: Function
 }
 
-const EmailItem: FC<EmailItemProps> = ({ from, date, subject, isRead, preview }) => {
+const EmailItem: FC<EmailItemProps> = ({
+  identifier,
+  from,
+  date,
+  subject,
+  isRead,
+  preview,
+  handleClick,
+}) => {
   return (
-    <Box component='section' sx={{ display: 'flex', flexDirection: 'column', py: 2 }}>
+    <Box
+      onClick={() => handleClick(identifier)}
+      component='section'
+      sx={{ display: 'flex', flexDirection: 'column', py: 2 }}
+    >
       <Box component='header' sx={{ display: 'flex', pl: 1, pr: 4, alignContent: 'center' }}>
         {!isRead && (
           <CircleIcon
