@@ -1,12 +1,7 @@
 import { takeUntil } from 'rxjs/operators'
 
-import {
-  Email,
-  SetReadState,
-  ListEmails,
-  ListSelectedEmailsSubscription,
-  EmailFull,
-} from '../types'
+import { SetReadState, ListEmails, ListSelectedEmailsSubscription } from '../types'
+import { Email, EmailFull } from '../interfaces'
 import {
   emailsRequest$,
   emailFullRequest$,

@@ -3,7 +3,7 @@ import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 import Grid from '@mui/material/Grid'
 
-import { EmailFull } from '../types'
+import { EmailFull } from '../interfaces'
 import { selectedEmail$ } from '../observables'
 import { ViewAreaToolbar } from '.'
 

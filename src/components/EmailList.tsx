@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react'
 import { Subject } from 'rxjs'
 import Grid from '@mui/material/Grid'
 
-import { Email } from '../types'
+import { Email } from '../interfaces'
 import { selectedFolder$ } from '../observables'
 import { displayFullEmail, listSelectedEmails } from '../selectors'
 import { EmailItem } from '.'

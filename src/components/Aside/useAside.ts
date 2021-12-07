@@ -2,12 +2,8 @@ import { useEffect, useState, useCallback } from 'react'
 import { Subject } from 'rxjs'
 
 import { FolderTypes } from '../../enums/folder-types.enum'
+import { AsideHook } from '../../interfaces'
 import { updateSelectedFolder, listFoldersSubscription$ } from '../../selectors'
-
-interface AsideHook {
-  foldersList: FolderTypes[]
-  handleFolderSelect(folderType: FolderTypes): void
-}
 
 const useAside = (): AsideHook => {
   const [foldersList, setFoldersList] = useState<FolderTypes[]>([])

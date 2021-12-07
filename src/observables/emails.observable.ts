@@ -1,7 +1,8 @@
 import { combineLatest, Subject, BehaviorSubject, Observable } from 'rxjs'
 import { take, map } from 'rxjs/operators'
 
-import { Email, EmailFull, EmailsRequest, GetFullEmail } from '../types'
+import { EmailsRequest, GetFullEmail } from '../types'
+import { Email, EmailFull } from '../interfaces'
 import { FolderTypes } from '../enums/folder-types.enum'
 import observableHttpClient from '../service/httpClient'
 
