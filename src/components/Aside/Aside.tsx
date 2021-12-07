@@ -1,12 +1,11 @@
-import { FC, useEffect, useState } from 'react'
-import { Subject } from 'rxjs'
+import { FC } from 'react'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import { SxProps } from '@mui/system'
 import { Theme } from '@mui/material/styles'
 
-import { FolderTypes } from '../enums/folder-types.enum'
-import { updateSelectedFolder, listFoldersSubscription$ } from '../selectors'
+import { FolderTypes } from '../../enums/folder-types.enum'
+import useAside from './useAside'
 
 interface AsideProps {}
 
@@ -17,23 +16,7 @@ const buttonStyle: SxProps<Theme> = {
 }
 
 const Aside: FC<AsideProps> = () => {
-  const [foldersList, setFoldersList] = useState<FolderTypes[]>([])
-
-  useEffect(() => {
-    const componentDestroyed$ = new Subject<void>()
-
-    listFoldersSubscription$(componentDestroyed$, setFoldersList)
-
-    return () => {
-      componentDestroyed$.next()
-      componentDestroyed$.complete()
-    }
-  }, [])
-
-  //TODO: useCallback
-  const handleFolderSelect = (folderType: FolderTypes) => {
-    updateSelectedFolder(folderType)
-  }
+  const { foldersList, handleFolderSelect } = useAside()
 
   return (
     <Grid
