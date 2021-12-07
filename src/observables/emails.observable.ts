@@ -12,8 +12,8 @@ export const _selectedEmail$ = new Subject<EmailFull>()
 export const emails$ = _emails$.asObservable()
 export const selectedEmail$ = _selectedEmail$.asObservable()
 
-export const selectedEmails$ = (selectedFolders$: Observable<FolderTypes>): Observable<Email[]> =>
-  combineLatest([emails$, selectedFolders$]).pipe(
+export const selectedEmails$ = (selectedFolder$: Observable<FolderTypes>): Observable<Email[]> =>
+  combineLatest([emails$, selectedFolder$]).pipe(
     map(([emails, selectedFolder]) =>
       emails.filter((email) => email.meta.folder === selectedFolder)
     )

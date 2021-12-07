@@ -37,11 +37,11 @@ export const listEmails: ListEmails = (componentDestroyed) => {
 }
 
 export const listSelectedEmails: ListSelectedEmailsSubscription = (
-  selectedFolders$,
+  selectedFolder$,
   componentDestroyed,
   stateSetter
 ): void => {
-  selectedEmails$(selectedFolders$)
+  selectedEmails$(selectedFolder$)
     .pipe(takeUntil(componentDestroyed))
     .subscribe((emails) => stateSetter(emails))
 }

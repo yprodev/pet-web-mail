@@ -10,7 +10,7 @@ export type FoldersRequest = () => Observable<FolderTypes[]>
 export type UpdateSelectedFolder = (folderName: FolderTypes) => void
 export type GetFullEmail = (emailId: string) => Observable<EmailFull>
 export type ListSelectedEmailsSubscription = (
-  selectedFolders$: Observable<FolderTypes>,
+  selectedFolder$: Observable<FolderTypes>,
   componentDestroyed: Subject<void>,
   stateSetter: Dispatch<SetStateAction<Email[]>>
 ) => void
