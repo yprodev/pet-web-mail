@@ -1,12 +1,11 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Subject } from 'rxjs'
+import { Subject, takeUntil } from 'rxjs'
 
-import { EmailListHook, Email } from '../../interfaces'
-import { selectedFolder$ } from '../../observables'
-import { displayFullEmail, listSelectedEmails } from '../../selectors'
+import { EmailListHook, EmailShort } from '../../interfaces'
+import { displayFullEmail, selectedEmails$ } from '../../service'
 
 const useEmailList = (): EmailListHook => {
-  const [emails, setEmails] = useState<Email[]>([])
+  const [emails, setEmails] = useState<EmailShort[]>([])
 
   const handleEmailDisplay = useCallback((emailId: string) => {
     displayFullEmail(emailId)
@@ -15,7 +14,9 @@ const useEmailList = (): EmailListHook => {
   useEffect(() => {
     const componentDestroyed$ = new Subject<void>()
 
-    listSelectedEmails(selectedFolder$, componentDestroyed$, setEmails)
+    selectedEmails$()
+      .pipe(takeUntil(componentDestroyed$))
+      .subscribe((emails) => setEmails(emails))
 
     return () => {
       componentDestroyed$.next()

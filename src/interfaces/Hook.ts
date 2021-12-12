@@ -1,5 +1,5 @@
 import { FolderTypes } from '../enums/folder-types.enum'
-import { Email } from '.'
+import { EmailShort, EmailComplete } from '.'
 
 export interface AsideHook {
   foldersList: FolderTypes[]
@@ -7,6 +7,11 @@ export interface AsideHook {
 }
 
 export interface EmailListHook {
-  emails: Email[]
+  emails: EmailShort[]
   handleEmailDisplay(emailId: string): void
+}
+
+export interface ViewAreaHook {
+  fullEmail: EmailComplete | unknown
+  toggleEmailReadState(): void
 }

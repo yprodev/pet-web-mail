@@ -1,5 +1,6 @@
 export { default as Aside } from './Aside/Aside'
 export { default as EmailList } from './EmailList/EmailList'
 export { default as ViewArea } from './ViewArea/ViewArea'
-export { default as EmailItem } from './EmailItem'
-export { default as ViewAreaToolbar } from './ViewAreaToolbar'
+export { default as EmailListItem } from './EmailListItem/EmailListItem'
+export { default as ViewAreaToolbar } from './ViewAreaToolbar/ViewAreaToolbar'
+export { default as Email } from './Email/Email'

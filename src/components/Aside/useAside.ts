@@ -3,12 +3,12 @@ import { Subject } from 'rxjs'
 
 import { FolderTypes } from '../../enums/folder-types.enum'
 import { AsideHook } from '../../interfaces'
-import { updateSelectedFolder, listFoldersSubscription$ } from '../../selectors'
+import { updateSelectedFolder, listFoldersSubscription$ } from '../../service'
 
 const useAside = (): AsideHook => {
   const [foldersList, setFoldersList] = useState<FolderTypes[]>([])
 
-  const handleFolderSelect = useCallback((folderType: FolderTypes) => {
+  const handleFolderSelect = useCallback((folderType: FolderTypes): void => {
     updateSelectedFolder(folderType)
   }, [])
 

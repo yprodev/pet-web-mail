@@ -1,4 +1,4 @@
-export interface Email {
+export interface EmailShort {
   id: string
   meta: {
     isRead: boolean
@@ -12,10 +12,10 @@ export interface Email {
   }
 }
 
-export interface EmailFull {
+export interface EmailContent {
   id: string
-  content: {
-    attachments: []
-    message: string
-  }
+  attachments: []
+  message: string
 }
+
+export type EmailComplete = EmailShort & EmailContent

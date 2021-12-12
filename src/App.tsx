@@ -5,7 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 
 import { theme } from './layout'
 import { Aside, EmailList, ViewArea } from './components'
-import { listEmails } from './selectors'
+import { listEmails } from './service'
 import { Subject } from 'rxjs'
 
 function App() {

@@ -30,6 +30,9 @@ const theme: Theme = createTheme({
     common: {
       white: '#ffffff',
     },
+    primary: {
+      main: '#0654C9', // #0654C9, #263142, #21ECFC, #FD8960, #C91D06 - Compound
+    },
   },
   spacing: (factor: number) => `${0.25 * factor}rem`,
 })

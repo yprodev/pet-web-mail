@@ -3,7 +3,7 @@ import { Box } from '@mui/system'
 import { Typography } from '@mui/material'
 import CircleIcon from '@mui/icons-material/Circle'
 
-interface EmailItemProps {
+interface EmailListItemProps {
   identifier: string
   from: string
   date: number //FIXME: Should be date of UTC format
@@ -13,7 +13,7 @@ interface EmailItemProps {
   handleClick: Function
 }
 
-const EmailItem: FC<EmailItemProps> = ({
+const EmailListItem: FC<EmailListItemProps> = ({
   identifier,
   from,
   date,
@@ -73,4 +73,4 @@ const EmailItem: FC<EmailItemProps> = ({
   )
 }
 
-export default EmailItem
+export default EmailListItem

@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import Grid from '@mui/material/Grid'
 
-import { Email } from '../../interfaces'
-import EmailItem from '../EmailItem'
+import { EmailShort } from '../../interfaces'
+import { EmailListItem } from '../'
 import useEmailList from './useEmailList'
 
 interface EmailListProps {}
@@ -12,8 +12,8 @@ const EmailList: FC<EmailListProps> = () => {
 
   return (
     <Grid item xs={3} sx={{ bgcolor: 'common.white', boxShadow: '1px 0 3px rgba(0, 0, 0, 0.1)' }}>
-      {emails.map((email: Email, idx: number) => (
-        <EmailItem
+      {emails.map((email: EmailShort, idx: number) => (
+        <EmailListItem
           handleClick={handleEmailDisplay}
           key={idx}
           identifier={email.id}
