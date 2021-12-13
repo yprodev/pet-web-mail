@@ -16,7 +16,7 @@ const EmailList: FC<EmailListProps> = () => {
         <EmailListItem
           handleClick={handleEmailDisplay}
           key={idx}
-          identifier={email.id}
+          emailId={email.id}
           isRead={email.meta.isRead}
           {...email.header}
         />

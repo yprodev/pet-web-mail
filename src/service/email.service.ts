@@ -1,5 +1,5 @@
 import { combineLatest, Subject, BehaviorSubject, Observable, takeUntil } from 'rxjs'
-import { take, map, distinctUntilChanged } from 'rxjs/operators'
+import { take, map, distinctUntilChanged, switchMap } from 'rxjs/operators'
 
 import {
   EmailsRequest,
@@ -7,6 +7,7 @@ import {
   SetReadState,
   ListEmails,
   ListSelectedEmailsSubscription,
+  SetReadStateNew,
 } from '../types'
 import { EmailComplete, EmailShort } from '../interfaces'
 import observableHttpClient from '../service/httpClient'
@@ -15,18 +16,15 @@ import observableHttpClient from '../service/httpClient'
 import { selectedFolder$ } from './folder.service'
 
 export const _emails$ = new BehaviorSubject<EmailShort[]>([])
-export const _selectedEmail$ = new Subject<EmailComplete>()
+export const _selectedEmailId$ = new Subject<string>()
 
 export const emails$ = _emails$.asObservable().pipe(
   distinctUntilChanged((prev, curr) => {
     return JSON.stringify(prev) === JSON.stringify(curr)
   })
 )
-export const selectedEmail$ = _selectedEmail$.asObservable().pipe(
-  distinctUntilChanged((prev, curr) => {
-    return JSON.stringify(prev) === JSON.stringify(curr)
-  })
-)
+
+export const selectedEmailId$ = _selectedEmailId$.asObservable()
 
 export const selectedEmails$ = (): Observable<EmailShort[]> =>
   combineLatest([emails$, selectedFolder$]).pipe(
@@ -66,6 +64,26 @@ export const setReadState: SetReadState = (emailId, status) => {
   _emails$.next(updateEmails)
 }
 
+export const setReadStateNew: SetReadStateNew = (emailId) => {
+  const emails = _emails$.getValue()
+  console.log('show the toggler')
+  const updateEmails = emails.map<EmailShort>((email) => {
+    if (email.id === emailId) {
+      return {
+        ...email,
+        meta: {
+          ...email.meta,
+          isRead: !email.meta.isRead,
+        },
+      }
+    }
+
+    return email
+  })
+
+  _emails$.next(updateEmails)
+}
+
 export const listEmails: ListEmails = (componentDestroyed) => {
   emailsRequest$()
     .pipe(takeUntil(componentDestroyed))
@@ -81,23 +99,25 @@ export const listSelectedEmails: ListSelectedEmailsSubscription = (
     .subscribe((emails) => stateSetter(emails))
 }
 
-export const displayFullEmail = (emailId: string): void => {
-  //FIXME: Something is wrong with the type
-  combineLatest([emailFullRequest$(emailId) as Observable<EmailComplete>, emails$])
-    .pipe(
-      distinctUntilChanged((prev, curr) => {
-        return JSON.stringify(prev) === JSON.stringify(curr)
-      })
-    )
-    .subscribe(([emailContent, emails]) => {
-      const selectedEmail = emails.find((email: EmailShort) => email.id === emailContent.id)
-
-      const emailFull = {
-        ...selectedEmail,
-        ...emailContent,
-      }
-
-      setReadState(emailId, true)
-      _selectedEmail$.next(emailFull)
-    })
+export const setEmailId = (emailId: string): void => {
+  setReadStateNew(emailId)
+  _selectedEmailId$.next(emailId)
 }
+
+export const getFullEmailNew$ = selectedEmailId$.pipe(
+  switchMap<string, Observable<EmailComplete>>((emailId) => emailFullRequest$(emailId))
+)
+
+export const fetchEmail$: Observable<EmailComplete> = combineLatest([
+  getFullEmailNew$,
+  emails$,
+]).pipe(
+  map(([fullEmail, emails]) => {
+    const emailFound = emails.find((email: EmailShort) => email.id === fullEmail.id)
+
+    return {
+      ...emailFound,
+      ...fullEmail,
+    }
+  })
+)

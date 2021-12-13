@@ -4,7 +4,7 @@ import { Typography } from '@mui/material'
 import CircleIcon from '@mui/icons-material/Circle'
 
 interface EmailListItemProps {
-  identifier: string
+  emailId: string
   from: string
   date: number //FIXME: Should be date of UTC format
   subject: string
@@ -14,7 +14,7 @@ interface EmailListItemProps {
 }
 
 const EmailListItem: FC<EmailListItemProps> = ({
-  identifier,
+  emailId,
   from,
   date,
   subject,
@@ -24,7 +24,7 @@ const EmailListItem: FC<EmailListItemProps> = ({
 }) => {
   return (
     <Box
-      onClick={() => handleClick(identifier)}
+      onClick={() => handleClick(emailId)}
       component='section'
       sx={{ display: 'flex', flexDirection: 'column', py: 2 }}
     >

@@ -2,13 +2,13 @@ import { useEffect, useState, useCallback } from 'react'
 import { Subject, takeUntil } from 'rxjs'
 
 import { EmailListHook, EmailShort } from '../../interfaces'
-import { displayFullEmail, selectedEmails$ } from '../../service'
+import { setEmailId, selectedEmails$ } from '../../service'
 
 const useEmailList = (): EmailListHook => {
   const [emails, setEmails] = useState<EmailShort[]>([])
 
   const handleEmailDisplay = useCallback((emailId: string) => {
-    displayFullEmail(emailId)
+    setEmailId(emailId)
   }, [])
 
   useEffect(() => {

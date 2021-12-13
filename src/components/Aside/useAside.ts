@@ -6,6 +6,7 @@ import { AsideHook } from '../../interfaces'
 import { updateSelectedFolder, listFoldersSubscription$ } from '../../service'
 
 const useAside = (): AsideHook => {
+  const componentDestroyed$ = new Subject<void>()
   const [foldersList, setFoldersList] = useState<FolderTypes[]>([])
 
   const handleFolderSelect = useCallback((folderType: FolderTypes): void => {
@@ -13,8 +14,6 @@ const useAside = (): AsideHook => {
   }, [])
 
   useEffect(() => {
-    const componentDestroyed$ = new Subject<void>()
-
     listFoldersSubscription$(componentDestroyed$, setFoldersList)
 
     return () => {
