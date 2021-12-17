@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { Subject, takeUntil } from 'rxjs'
 
 import { ViewAreaHook, EmailComplete } from '../../interfaces'
-import { setReadStateNew, selectedEmailId$, fetchEmail$ } from '../../service'
+import { setReadStateNew, selectedEmailId$, fetchEmail$, findCachedEmail$ } from '../../service'
 
 export const isEmail = (email: unknown): email is EmailComplete => email !== undefined
 export const isEmailId = (id: unknown): id is string => id !== undefined
@@ -24,7 +24,10 @@ const useViewArea = (): ViewAreaHook => {
       setEmailId(emailId)
     })
 
-    fetchEmail$.pipe(takeUntil(componentDestroyed$)).subscribe((email) => setEmail(email))
+    //TODO: Uncomment after testing
+    // fetchEmail$.pipe(takeUntil(componentDestroyed$)).subscribe((email) => setEmail(email))
+
+    findCachedEmail$.pipe(takeUntil(componentDestroyed$)).subscribe((email) => setEmail(email))
 
     return () => {
       componentDestroyed$.next()

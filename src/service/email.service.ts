@@ -1,4 +1,4 @@
-import { combineLatest, Subject, BehaviorSubject, Observable, takeUntil } from 'rxjs'
+import { combineLatest, Subject, BehaviorSubject, Observable, takeUntil, of, EMPTY } from 'rxjs'
 import { take, map, distinctUntilChanged, switchMap } from 'rxjs/operators'
 
 import {
@@ -9,13 +9,15 @@ import {
   ListSelectedEmailsSubscription,
   SetReadStateNew,
 } from '../types'
-import { EmailComplete, EmailShort } from '../interfaces'
+import { EmailComplete, EmailContent, EmailShort } from '../interfaces'
 import observableHttpClient from '../service/httpClient'
 
 // TODO: Have questions???
 import { selectedFolder$ } from './folder.service'
 
 export const _emails$ = new BehaviorSubject<EmailShort[]>([])
+export const _emailsFullCached$ = new BehaviorSubject<EmailComplete[]>([])
+
 export const _selectedEmailId$ = new Subject<string>()
 
 export const emails$ = _emails$.asObservable().pipe(
@@ -42,7 +44,7 @@ export const emailsRequest$: EmailsRequest = () =>
   )
 
 export const emailFullRequest$: GetFullEmail = (emailId) =>
-  observableHttpClient.get<EmailComplete>(`emailsFull/${emailId}`).pipe(take(1))
+  observableHttpClient.get<EmailContent>(`emailsFull/${emailId}`).pipe(take(1))
 
 export const setReadState: SetReadState = (emailId, status) => {
   const emails = _emails$.getValue()
@@ -104,12 +106,55 @@ export const setEmailId = (emailId: string): void => {
   _selectedEmailId$.next(emailId)
 }
 
-export const getFullEmailNew$ = selectedEmailId$.pipe(
-  switchMap<string, Observable<EmailComplete>>((emailId) => emailFullRequest$(emailId))
+//FIXME: Why do we need here switchMap?
+export const getFullEmailCustom1$ = selectedEmailId$.pipe(
+  switchMap<string, Observable<EmailContent>>((emailId) => {
+    return emailFullRequest$(emailId)
+  })
 )
 
-export const fetchEmail$: Observable<EmailComplete> = combineLatest([
-  getFullEmailNew$,
+// 1. Get selected id
+// 2. Find an email in the list of emails with the id selected
+// 3a. If found, return the cached email
+// 3b. If not, fetch an email by selected id
+// 4. Write the found email to the cache
+// 5. return the found email
+
+const mergeEmailContent$ = (selectedEmailId: string) =>
+  combineLatest([emailFullRequest$(selectedEmailId), emails$]).pipe(
+    switchMap<[EmailContent, EmailShort[]], Observable<EmailComplete>>(
+      ([fetchedEmailContent, emails]) => {
+        const emailFound = emails.find((email: EmailShort) => email.id === fetchedEmailContent.id)
+
+        if (emailFound) {
+          const emailDataJoined = {
+            ...emailFound,
+            ...fetchedEmailContent,
+          }
+
+          const ems_cached = _emailsFullCached$.getValue()
+          ems_cached.push(emailDataJoined)
+          _emailsFullCached$.next(ems_cached)
+
+          return of(emailDataJoined)
+        }
+
+        return EMPTY
+      }
+    )
+  )
+
+export const findCachedEmail$ = combineLatest([selectedEmailId$, _emailsFullCached$]).pipe(
+  switchMap(([selectedEmailId, cachedEmails]) => {
+    const cachedEmail = cachedEmails.find((email) => selectedEmailId === email.id)
+
+    return cachedEmail ? of(cachedEmail) : mergeEmailContent$(selectedEmailId)
+  })
+)
+
+//TODO: Rename this observable - it is not fetching an email
+export const fetchEmail$: Observable<EmailContent> = combineLatest([
+  getFullEmailCustom1$,
   emails$,
 ]).pipe(
   map(([fullEmail, emails]) => {
