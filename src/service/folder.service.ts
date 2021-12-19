@@ -23,6 +23,7 @@ export const selectedFolder$ = _selectedFolder$.asObservable().pipe(
 export const foldersRequest: FoldersRequest = () =>
   observableHttpClient.get<FolderTypes[]>('folderList').pipe(take(1))
 
+//FIXME: Just use it within the component
 export const listFoldersSubscription$: ListFoldersSubscription = (
   componentDestroyed,
   stateSetter
