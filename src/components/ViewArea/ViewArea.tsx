@@ -10,17 +10,16 @@ interface ViewAreaProps {}
 const ViewArea: FC<ViewAreaProps> = () => {
   const { email, emailId, toggleEmailReadState } = useViewArea()
 
-  console.log('show real email: ', email)
-
   return (
     <Grid
       item
       xs={7}
-      sx={{ bgcolor: 'Background.default' }}
+      sx={{ p: 3, bgcolor: 'Background.default' }}
       key={isEmailId(emailId) ? emailId : 'something'}
     >
-      <ViewAreaToolbar handleClick={toggleEmailReadState} />
-      {/* {isFullEmail(fullEmail) && <Email email={fullEmail} />} */}
+      {isEmail(email) && (
+        <ViewAreaToolbar handleClick={toggleEmailReadState} isRead={email.meta.isRead} />
+      )}
       {isEmail(email) && <Email email={email} />}
     </Grid>
   )

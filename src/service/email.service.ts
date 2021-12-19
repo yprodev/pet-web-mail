@@ -4,10 +4,9 @@ import { take, map, distinctUntilChanged, switchMap } from 'rxjs/operators'
 import {
   EmailsRequest,
   GetFullEmail,
-  SetReadState,
   ListEmails,
   ListSelectedEmailsSubscription,
-  SetReadStateNew,
+  ToggleReadState,
 } from '../types'
 import { EmailComplete, EmailContent, EmailShort } from '../interfaces'
 import observableHttpClient from '../service/httpClient'
@@ -16,7 +15,7 @@ import observableHttpClient from '../service/httpClient'
 import { selectedFolder$ } from './folder.service'
 
 export const _emails$ = new BehaviorSubject<EmailShort[]>([])
-export const _emailsFullCached$ = new BehaviorSubject<EmailComplete[]>([])
+export const _emailsContentCached$ = new BehaviorSubject<EmailComplete[]>([])
 
 export const _selectedEmailId$ = new Subject<string>()
 
@@ -46,44 +45,52 @@ export const emailsRequest$: EmailsRequest = () =>
 export const emailFullRequest$: GetFullEmail = (emailId) =>
   observableHttpClient.get<EmailContent>(`emailsFull/${emailId}`).pipe(take(1))
 
-export const setReadState: SetReadState = (emailId, status) => {
+export const toggleReadState: ToggleReadState = (emailId) => {
   const emails = _emails$.getValue()
+  const cachedEmails = _emailsContentCached$.getValue()
 
   const updateEmails = emails.map<EmailShort>((email) => {
     if (email.id === emailId) {
-      return {
-        ...email,
-        meta: {
-          ...email.meta,
-          isRead: status,
-        },
-      }
+      return Object.assign({}, email, { meta: { ...email.meta, isRead: !email.meta.isRead } })
+    }
+
+    return email
+  })
+
+  const updatedCachedEmails = cachedEmails.map<EmailComplete>((email) => {
+    if (email.id === emailId) {
+      return Object.assign({}, email, { meta: { ...email.meta, isRead: !email.meta.isRead } })
     }
 
     return email
   })
 
   _emails$.next(updateEmails)
+  _emailsContentCached$.next(updatedCachedEmails)
 }
 
-export const setReadStateNew: SetReadStateNew = (emailId) => {
+export const setReadState = (emailId: string): void => {
   const emails = _emails$.getValue()
-  console.log('show the toggler')
+  const cachedEmails = _emailsContentCached$.getValue()
+
   const updateEmails = emails.map<EmailShort>((email) => {
     if (email.id === emailId) {
-      return {
-        ...email,
-        meta: {
-          ...email.meta,
-          isRead: !email.meta.isRead,
-        },
-      }
+      return Object.assign({}, email, { meta: { ...email.meta, isRead: true } })
+    }
+
+    return email
+  })
+
+  const updatedCachedEmails = cachedEmails.map<EmailComplete>((email) => {
+    if (email.id === emailId) {
+      return Object.assign({}, email, { meta: { ...email.meta, isRead: true } })
     }
 
     return email
   })
 
   _emails$.next(updateEmails)
+  _emailsContentCached$.next(updatedCachedEmails)
 }
 
 export const listEmails: ListEmails = (componentDestroyed) => {
@@ -102,24 +109,11 @@ export const listSelectedEmails: ListSelectedEmailsSubscription = (
 }
 
 export const setEmailId = (emailId: string): void => {
-  setReadStateNew(emailId)
+  setReadState(emailId)
   _selectedEmailId$.next(emailId)
 }
 
-//FIXME: Why do we need here switchMap?
-export const getFullEmailCustom1$ = selectedEmailId$.pipe(
-  switchMap<string, Observable<EmailContent>>((emailId) => {
-    return emailFullRequest$(emailId)
-  })
-)
-
-// 1. Get selected id
-// 2. Find an email in the list of emails with the id selected
-// 3a. If found, return the cached email
-// 3b. If not, fetch an email by selected id
-// 4. Write the found email to the cache
-// 5. return the found email
-
+//FIXME: Probably we need to use here mergeMap
 const mergeEmailContent$ = (selectedEmailId: string) =>
   combineLatest([emailFullRequest$(selectedEmailId), emails$]).pipe(
     switchMap<[EmailContent, EmailShort[]], Observable<EmailComplete>>(
@@ -132,9 +126,9 @@ const mergeEmailContent$ = (selectedEmailId: string) =>
             ...fetchedEmailContent,
           }
 
-          const ems_cached = _emailsFullCached$.getValue()
+          const ems_cached = _emailsContentCached$.getValue()
           ems_cached.push(emailDataJoined)
-          _emailsFullCached$.next(ems_cached)
+          _emailsContentCached$.next(ems_cached)
 
           return of(emailDataJoined)
         }
@@ -144,25 +138,10 @@ const mergeEmailContent$ = (selectedEmailId: string) =>
     )
   )
 
-export const findCachedEmail$ = combineLatest([selectedEmailId$, _emailsFullCached$]).pipe(
+export const getFullEmail$ = combineLatest([selectedEmailId$, _emailsContentCached$]).pipe(
   switchMap(([selectedEmailId, cachedEmails]) => {
     const cachedEmail = cachedEmails.find((email) => selectedEmailId === email.id)
 
     return cachedEmail ? of(cachedEmail) : mergeEmailContent$(selectedEmailId)
-  })
-)
-
-//TODO: Rename this observable - it is not fetching an email
-export const fetchEmail$: Observable<EmailContent> = combineLatest([
-  getFullEmailCustom1$,
-  emails$,
-]).pipe(
-  map(([fullEmail, emails]) => {
-    const emailFound = emails.find((email: EmailShort) => email.id === fullEmail.id)
-
-    return {
-      ...emailFound,
-      ...fullEmail,
-    }
   })
 )

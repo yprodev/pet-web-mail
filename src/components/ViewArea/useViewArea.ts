@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { Subject, takeUntil } from 'rxjs'
 
 import { ViewAreaHook, EmailComplete } from '../../interfaces'
-import { setReadStateNew, selectedEmailId$, fetchEmail$, findCachedEmail$ } from '../../service'
+import { toggleReadState, selectedEmailId$, getFullEmail$ } from '../../service'
 
 export const isEmail = (email: unknown): email is EmailComplete => email !== undefined
 export const isEmailId = (id: unknown): id is string => id !== undefined
@@ -15,7 +15,7 @@ const useViewArea = (): ViewAreaHook => {
   const toggleEmailReadState = useCallback(() => {
     if (emailId) {
       console.log('toolbar set read', emailId)
-      setReadStateNew(emailId)
+      toggleReadState(emailId)
     }
   }, [emailId])
 
@@ -24,10 +24,7 @@ const useViewArea = (): ViewAreaHook => {
       setEmailId(emailId)
     })
 
-    //TODO: Uncomment after testing
-    // fetchEmail$.pipe(takeUntil(componentDestroyed$)).subscribe((email) => setEmail(email))
-
-    findCachedEmail$.pipe(takeUntil(componentDestroyed$)).subscribe((email) => setEmail(email))
+    getFullEmail$.pipe(takeUntil(componentDestroyed$)).subscribe((email) => setEmail(email))
 
     return () => {
       componentDestroyed$.next()

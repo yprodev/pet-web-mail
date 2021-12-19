@@ -11,7 +11,7 @@ interface EmailProps {
 
 const Email: FC<EmailProps> = ({ email }) => {
   return (
-    <Card sx={{ m: 3, bgcolor: 'white' }}>
+    <Card sx={{ bgcolor: 'white' }}>
       <CardContent>
         <Box
           component='header'

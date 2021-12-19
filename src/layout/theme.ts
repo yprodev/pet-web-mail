@@ -33,6 +33,9 @@ const theme: Theme = createTheme({
     primary: {
       main: '#0654C9', // #0654C9, #263142, #21ECFC, #FD8960, #C91D06 - Compound
     },
+    error: {
+      main: '#C91D06',
+    },
   },
   spacing: (factor: number) => `${0.25 * factor}rem`,
 })
