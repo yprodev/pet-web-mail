@@ -5,6 +5,7 @@ import { EmailListHook, EmailShort } from '../../interfaces'
 import { setEmailId, selectedEmails$ } from '../../service'
 
 const useEmailList = (): EmailListHook => {
+  const componentDestroyed$ = new Subject<void>()
   const [emails, setEmails] = useState<EmailShort[]>([])
 
   const handleEmailDisplay = useCallback((emailId: string) => {
@@ -12,8 +13,6 @@ const useEmailList = (): EmailListHook => {
   }, [])
 
   useEffect(() => {
-    const componentDestroyed$ = new Subject<void>()
-
     selectedEmails$()
       .pipe(takeUntil(componentDestroyed$))
       .subscribe((emails) => setEmails(emails))
@@ -22,6 +21,7 @@ const useEmailList = (): EmailListHook => {
       componentDestroyed$.next()
       componentDestroyed$.complete()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return {

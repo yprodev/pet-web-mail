@@ -1,21 +1,18 @@
 import { take, map } from 'rxjs/operators'
 
-import { EmailsRequest, GetFullEmail } from '../types'
+import { Request, GetFullEmail } from '../types'
 import { EmailContent, EmailShort } from '../interfaces'
 import { EndPointsList } from '../enums'
-import observableHttpClient from '../service/httpClient'
+import { get } from '../service/httpClient'
+import { compareDates } from '../util'
 
-//TODO: Refactor comparison function
-export const emailsRequest$: EmailsRequest = () =>
-  observableHttpClient.get<EmailShort[]>(EndPointsList.EMAIL_LIST).pipe(
+const emailsRequest$: Request<EmailShort[]> = () =>
+  get<EmailShort[]>(EndPointsList.EMAIL_LIST).pipe(
     take(1),
-    map<EmailShort[], EmailShort[]>((emails) =>
-      emails.sort(
-        (firstDate, secondElement) =>
-          new Date(secondElement.header.date).getDate() - new Date(firstDate.header.date).getDate()
-      )
-    )
+    map<EmailShort[], EmailShort[]>((emails) => emails.sort(compareDates))
   )
 
-export const emailFullRequest$: GetFullEmail = (emailId) =>
-  observableHttpClient.get<EmailContent>(`${EndPointsList.EMAIL_FULL}/${emailId}`).pipe(take(1))
+const emailFullRequest$: GetFullEmail = (emailId) =>
+  get<EmailContent>(`${EndPointsList.EMAIL_FULL}/${emailId}`).pipe(take(1))
+
+export { emailsRequest$, emailFullRequest$ }

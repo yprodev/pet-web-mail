@@ -6,7 +6,6 @@ import CheckIcon from '@mui/icons-material/Check'
 import CancelIcon from '@mui/icons-material/Cancel'
 
 import { EmailComplete } from '../../interfaces'
-import { emails$ } from '../../service'
 
 interface ViewAreaToolbarProps<T> {
   toggleIsRead: MouseEventHandler<T>

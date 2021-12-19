@@ -4,7 +4,7 @@ import { Subject, takeUntil } from 'rxjs'
 import { FolderTypes } from '../../enums/folder-types.enum'
 import { AsideHook } from '../../interfaces'
 import { updateSelectedFolder } from '../../service'
-import { foldersRequest } from '../../resource'
+import { foldersRequest$ } from '../../resource'
 
 const useAside = (): AsideHook => {
   const componentDestroyed$ = new Subject<void>()
@@ -15,7 +15,7 @@ const useAside = (): AsideHook => {
   }, [])
 
   useEffect(() => {
-    foldersRequest()
+    foldersRequest$()
       .pipe(takeUntil(componentDestroyed$))
       .subscribe((folders) => {
         setFoldersList(folders)

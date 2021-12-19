@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators'
 
 const clientHTTPConfig: AxiosRequestConfig = {
   baseURL: 'http://localhost:3004/',
-  timeout: 1000,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -46,4 +46,4 @@ const deleteR = <T>(url: string, id: number): Observable<T | void> => {
   return defer(() => httpClient.delete(`${url}/${id}`)).pipe(map((result) => result.data))
 }
 
-export default { get, post, put, patch, delete: deleteR }
+export { get, post, put, patch, deleteR }

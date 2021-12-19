@@ -2,18 +2,20 @@ import { Observable } from 'rxjs'
 import { FolderTypes } from './enums/folder-types.enum'
 import { EmailContent, EmailShort } from './interfaces'
 
+// Requests
 export type InitHttpClient = (config: AxiosRequestConfig) => AxiosInstance
+export type Request<T> = () => Observable<T>
 
-export type ListEmails = (componentDestroyed: Subject<void>) => void
+// Emails
+export type GetFullEmail = (emailId: string) => Observable<EmailContent>
+export type SetEmails = (emails: EmailShort[]) => void
+
+// Folders
+export type UpdateSelectedFolder = (folderName: FolderTypes) => void
+
+// Actions
 export type ToggleReadState = (emailId: string) => void
 export type PutIntoTrash = (emailId: string) => void
 
-export type EmailsRequest = () => Observable<EmailShort[]>
-export type FoldersRequest = () => Observable<FolderTypes[]>
-
-export type UpdateSelectedFolder = (folderName: FolderTypes) => void
-export type GetFullEmail = (emailId: string) => Observable<EmailContent>
-export type ListSelectedEmailsSubscription = (
-  componentDestroyed: Subject<void>,
-  stateSetter: Dispatch<SetStateAction<EmailShort[]>>
-) => void
+// Utils
+export type CompareDates = (elementOne: EmailShort, elementTwo: EmailShort) => number

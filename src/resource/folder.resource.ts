@@ -1,8 +1,10 @@
 import { take } from 'rxjs/operators'
 
-import { FoldersRequest } from '../types'
+import { Request } from '../types'
 import { FolderTypes, EndPointsList } from '../enums'
-import observableHttpClient from '../service/httpClient'
+import { get } from '../service/httpClient'
 
-export const foldersRequest: FoldersRequest = () =>
-  observableHttpClient.get<FolderTypes[]>(EndPointsList.FOLDER_LIST).pipe(take(1))
+const foldersRequest$: Request<FolderTypes[]> = () =>
+  get<FolderTypes[]>(EndPointsList.FOLDER_LIST).pipe(take(1))
+
+export { foldersRequest$ }

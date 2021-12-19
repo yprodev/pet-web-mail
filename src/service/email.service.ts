@@ -1,32 +1,30 @@
-import { combineLatest, BehaviorSubject, Observable, takeUntil, of, EMPTY } from 'rxjs'
-import { map, distinctUntilChanged, switchMap } from 'rxjs/operators'
+import { combineLatest, BehaviorSubject, Observable, of, EMPTY } from 'rxjs'
+import { map, switchMap } from 'rxjs/operators'
 
-import { ListEmails, ListSelectedEmailsSubscription, ToggleReadState, PutIntoTrash } from '../types'
+import { SetEmails, ToggleReadState, PutIntoTrash } from '../types'
 import { EmailComplete, EmailContent, EmailShort } from '../interfaces'
-import { emailFullRequest$, emailsRequest$ } from '../resource'
+import { emailFullRequest$ } from '../resource'
+
 // TODO: Have questions???
 import { selectedFolder$ } from './folder.service'
 
-export const _emails$ = new BehaviorSubject<EmailShort[]>([])
-export const _emailsContentCached$ = new BehaviorSubject<EmailComplete[]>([])
-export const _selectedEmailId$ = new BehaviorSubject<string>('')
+const _emails$ = new BehaviorSubject<EmailShort[]>([])
+const _emailsContentCached$ = new BehaviorSubject<EmailComplete[]>([])
+const _selectedEmailId$ = new BehaviorSubject<string>('')
 
-export const emails$ = _emails$.asObservable().pipe(
-  distinctUntilChanged((prev, curr) => {
-    return JSON.stringify(prev) === JSON.stringify(curr)
-  })
-)
+const emails$ = _emails$.asObservable()
 
-export const selectedEmailId$ = _selectedEmailId$.asObservable()
+const selectedEmailId$ = _selectedEmailId$.asObservable()
 
-export const selectedEmails$ = (): Observable<EmailShort[]> =>
+//TODO: Move out the type
+const selectedEmails$ = (): Observable<EmailShort[]> =>
   combineLatest([emails$, selectedFolder$]).pipe(
     map(([emails, selectedFolder]) =>
       emails.filter((email) => email.meta.folder === selectedFolder)
     )
   )
 
-export const putIntoTrash: PutIntoTrash = (emailId) => {
+const putIntoTrash: PutIntoTrash = (emailId) => {
   const emails = _emails$.getValue()
   const cachedEmails = _emailsContentCached$.getValue()
 
@@ -50,11 +48,11 @@ export const putIntoTrash: PutIntoTrash = (emailId) => {
   _emailsContentCached$.next(updatedCachedEmails)
 }
 
-export const resetSelectedEmailId = (): void => {
+const resetSelectedEmailId = (): void => {
   _selectedEmailId$.next('')
 }
 
-export const toggleReadState: ToggleReadState = (emailId) => {
+const toggleReadState: ToggleReadState = (emailId) => {
   const emails = _emails$.getValue()
   const cachedEmails = _emailsContentCached$.getValue()
 
@@ -78,7 +76,7 @@ export const toggleReadState: ToggleReadState = (emailId) => {
   _emailsContentCached$.next(updatedCachedEmails)
 }
 
-export const setReadState = (emailId: string): void => {
+const setReadState = (emailId: string): void => {
   const emails = _emails$.getValue()
   const cachedEmails = _emailsContentCached$.getValue()
 
@@ -102,22 +100,11 @@ export const setReadState = (emailId: string): void => {
   _emailsContentCached$.next(updatedCachedEmails)
 }
 
-export const listEmails: ListEmails = (componentDestroyed) => {
-  emailsRequest$()
-    .pipe(takeUntil(componentDestroyed))
-    .subscribe((emails: EmailShort[]) => _emails$.next(emails))
+const setEmails: SetEmails = (emails) => {
+  _emails$.next(emails)
 }
 
-export const listSelectedEmails: ListSelectedEmailsSubscription = (
-  componentDestroyed,
-  stateSetter
-): void => {
-  selectedEmails$()
-    .pipe(takeUntil(componentDestroyed))
-    .subscribe((emails) => stateSetter(emails))
-}
-
-export const setEmailId = (emailId: string): void => {
+const setEmailId = (emailId: string): void => {
   setReadState(emailId)
   _selectedEmailId$.next(emailId)
 }
@@ -147,10 +134,22 @@ const mergeEmailContent$ = (selectedEmailId: string) =>
     )
   )
 
-export const getFullEmail$ = combineLatest([selectedEmailId$, _emailsContentCached$]).pipe(
+const getFullEmail$ = combineLatest([selectedEmailId$, _emailsContentCached$]).pipe(
   switchMap(([selectedEmailId, cachedEmails]) => {
     const cachedEmail = cachedEmails.find((email) => selectedEmailId === email.id)
 
     return cachedEmail ? of(cachedEmail) : mergeEmailContent$(selectedEmailId)
   })
 )
+
+export {
+  selectedEmails$,
+  selectedEmailId$,
+  putIntoTrash,
+  resetSelectedEmailId,
+  toggleReadState,
+  setReadState,
+  setEmails,
+  setEmailId,
+  getFullEmail$,
+}
