@@ -2,25 +2,40 @@ import { useEffect, useState, useCallback } from 'react'
 import { Subject, takeUntil } from 'rxjs'
 
 import { ViewAreaHook, EmailComplete } from '../../interfaces'
-import { toggleReadState, selectedEmailId$, getFullEmail$ } from '../../service'
+import {
+  toggleReadState,
+  selectedEmailId$,
+  getFullEmail$,
+  putIntoTrash,
+  resetSelectedEmailId,
+} from '../../service'
 
-export const isEmail = (email: unknown): email is EmailComplete => email !== undefined
-export const isEmailId = (id: unknown): id is string => id !== undefined
+//FIXME: use lodash
+export const isEmail = (email: unknown): email is EmailComplete =>
+  email !== undefined && email !== null
+export const isEmailId = (id: unknown): id is string => id !== undefined && id !== null
 
 const useViewArea = (): ViewAreaHook => {
   const componentDestroyed$ = new Subject<void>()
-  const [email, setEmail] = useState<EmailComplete>()
-  const [emailId, setEmailId] = useState<string>()
+  const [email, setEmail] = useState<EmailComplete | unknown>(null)
+  const [emailId, setEmailId] = useState<string | unknown>(null)
 
-  const toggleEmailReadState = useCallback(() => {
-    if (emailId) {
-      console.log('toolbar set read', emailId)
+  const removeEmail = useCallback((): void => {
+    isEmailId(emailId) && putIntoTrash(emailId)
+    resetSelectedEmailId()
+    setEmail(null)
+    setEmailId(null)
+  }, [emailId])
+
+  const toggleEmailReadState = useCallback((): void => {
+    if (isEmailId(emailId)) {
       toggleReadState(emailId)
     }
   }, [emailId])
 
   useEffect(() => {
     selectedEmailId$.pipe(takeUntil(componentDestroyed$)).subscribe((emailId) => {
+      console.log('new email id', emailId)
       setEmailId(emailId)
     })
 
@@ -37,6 +52,7 @@ const useViewArea = (): ViewAreaHook => {
     email,
     emailId,
     toggleEmailReadState,
+    removeEmail,
   }
 }
 

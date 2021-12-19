@@ -8,17 +8,21 @@ import useViewArea, { isEmail, isEmailId } from './useViewArea'
 interface ViewAreaProps {}
 
 const ViewArea: FC<ViewAreaProps> = () => {
-  const { email, emailId, toggleEmailReadState } = useViewArea()
+  const { email, emailId, toggleEmailReadState, removeEmail } = useViewArea()
 
   return (
     <Grid
       item
       xs={7}
       sx={{ p: 3, bgcolor: 'Background.default' }}
-      key={isEmailId(emailId) ? emailId : 'something'}
+      key={isEmailId(emailId) ? emailId : 'something'} //FIXME: What is something?
     >
       {isEmail(email) && (
-        <ViewAreaToolbar handleClick={toggleEmailReadState} isRead={email.meta.isRead} />
+        <ViewAreaToolbar
+          toggleIsRead={toggleEmailReadState}
+          removeEmail={removeEmail}
+          email={email}
+        />
       )}
       {isEmail(email) && <Email email={email} />}
     </Grid>

@@ -14,5 +14,6 @@ export interface EmailListHook {
 export interface ViewAreaHook {
   email: EmailComplete | unknown
   emailId: string | unknown
-  toggleEmailReadState(): void
+  toggleEmailReadState(): void //TODO: Define the type
+  removeEmail(): void //TODO: Define the type
 }

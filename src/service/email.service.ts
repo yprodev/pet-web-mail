@@ -7,6 +7,7 @@ import {
   ListEmails,
   ListSelectedEmailsSubscription,
   ToggleReadState,
+  PutIntoTrash,
 } from '../types'
 import { EmailComplete, EmailContent, EmailShort } from '../interfaces'
 import observableHttpClient from '../service/httpClient'
@@ -16,8 +17,7 @@ import { selectedFolder$ } from './folder.service'
 
 export const _emails$ = new BehaviorSubject<EmailShort[]>([])
 export const _emailsContentCached$ = new BehaviorSubject<EmailComplete[]>([])
-
-export const _selectedEmailId$ = new Subject<string>()
+export const _selectedEmailId$ = new BehaviorSubject<string>('')
 
 export const emails$ = _emails$.asObservable().pipe(
   distinctUntilChanged((prev, curr) => {
@@ -44,6 +44,34 @@ export const emailsRequest$: EmailsRequest = () =>
 
 export const emailFullRequest$: GetFullEmail = (emailId) =>
   observableHttpClient.get<EmailContent>(`emailsFull/${emailId}`).pipe(take(1))
+
+export const putIntoTrash: PutIntoTrash = (emailId) => {
+  const emails = _emails$.getValue()
+  const cachedEmails = _emailsContentCached$.getValue()
+
+  const updateEmails = emails.map<EmailShort>((email) => {
+    if (email.id === emailId) {
+      return Object.assign({}, email, { meta: { ...email.meta, folder: 'trash' } })
+    }
+
+    return email
+  })
+
+  const updatedCachedEmails = cachedEmails.map<EmailComplete>((email) => {
+    if (email.id === emailId) {
+      return Object.assign({}, email, { meta: { ...email.meta, folder: 'trash' } })
+    }
+
+    return email
+  })
+
+  _emails$.next(updateEmails)
+  _emailsContentCached$.next(updatedCachedEmails)
+}
+
+export const resetSelectedEmailId = (): void => {
+  _selectedEmailId$.next('')
+}
 
 export const toggleReadState: ToggleReadState = (emailId) => {
   const emails = _emails$.getValue()

@@ -27,12 +27,14 @@ const Email: FC<EmailProps> = ({ email }) => {
             {email.meta.isRead && (
               <Chip size='small' color='primary' label='Email is read' deleteIcon={<DoneIcon />} />
             )}
-            <Chip
-              size='small'
-              label='Email is deleted'
-              deleteIcon={<DeleteIcon />}
-              variant='outlined'
-            />
+            {email.meta.folder === 'trash' && (
+              <Chip
+                size='small'
+                label='Email is deleted'
+                deleteIcon={<DeleteIcon />}
+                variant='outlined'
+              />
+            )}
           </Stack>
           <Typography variant='h4' component='h4'>
             {email.header.subject}

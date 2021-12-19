@@ -6,6 +6,7 @@ export type InitHttpClient = (config: AxiosRequestConfig) => AxiosInstance
 
 export type ListEmails = (componentDestroyed: Subject<void>) => void
 export type ToggleReadState = (emailId: string) => void
+export type PutIntoTrash = (emailId: string) => void
 
 export type EmailsRequest = () => Observable<EmailShort[]>
 export type FoldersRequest = () => Observable<FolderTypes[]>
