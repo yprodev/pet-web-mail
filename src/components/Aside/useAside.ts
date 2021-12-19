@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Subject } from 'rxjs'
+import { Subject, takeUntil } from 'rxjs'
 
 import { FolderTypes } from '../../enums/folder-types.enum'
 import { AsideHook } from '../../interfaces'
-import { updateSelectedFolder, listFoldersSubscription$ } from '../../service'
+import { updateSelectedFolder } from '../../service'
+import { foldersRequest } from '../../resource'
 
 const useAside = (): AsideHook => {
   const componentDestroyed$ = new Subject<void>()
@@ -14,12 +15,17 @@ const useAside = (): AsideHook => {
   }, [])
 
   useEffect(() => {
-    listFoldersSubscription$(componentDestroyed$, setFoldersList)
+    foldersRequest()
+      .pipe(takeUntil(componentDestroyed$))
+      .subscribe((folders) => {
+        setFoldersList(folders)
+      })
 
     return () => {
       componentDestroyed$.next()
       componentDestroyed$.complete()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return {

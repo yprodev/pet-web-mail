@@ -1,17 +1,9 @@
-import { combineLatest, Subject, BehaviorSubject, Observable, takeUntil, of, EMPTY } from 'rxjs'
-import { take, map, distinctUntilChanged, switchMap } from 'rxjs/operators'
+import { combineLatest, BehaviorSubject, Observable, takeUntil, of, EMPTY } from 'rxjs'
+import { map, distinctUntilChanged, switchMap } from 'rxjs/operators'
 
-import {
-  EmailsRequest,
-  GetFullEmail,
-  ListEmails,
-  ListSelectedEmailsSubscription,
-  ToggleReadState,
-  PutIntoTrash,
-} from '../types'
+import { ListEmails, ListSelectedEmailsSubscription, ToggleReadState, PutIntoTrash } from '../types'
 import { EmailComplete, EmailContent, EmailShort } from '../interfaces'
-import observableHttpClient from '../service/httpClient'
-
+import { emailFullRequest$, emailsRequest$ } from '../resource'
 // TODO: Have questions???
 import { selectedFolder$ } from './folder.service'
 
@@ -33,20 +25,6 @@ export const selectedEmails$ = (): Observable<EmailShort[]> =>
       emails.filter((email) => email.meta.folder === selectedFolder)
     )
   )
-
-export const emailsRequest$: EmailsRequest = () =>
-  observableHttpClient.get<EmailShort[]>('emails').pipe(
-    take(1),
-    map<EmailShort[], EmailShort[]>((emails) =>
-      emails.sort(
-        (firstDate, secondElement) =>
-          new Date(secondElement.header.date).getDate() - new Date(firstDate.header.date).getDate()
-      )
-    )
-  )
-
-export const emailFullRequest$: GetFullEmail = (emailId) =>
-  observableHttpClient.get<EmailContent>(`emailsFull/${emailId}`).pipe(take(1))
 
 export const putIntoTrash: PutIntoTrash = (emailId) => {
   const emails = _emails$.getValue()

@@ -17,7 +17,3 @@ export type ListSelectedEmailsSubscription = (
   componentDestroyed: Subject<void>,
   stateSetter: Dispatch<SetStateAction<EmailShort[]>>
 ) => void
-export type ListFoldersSubscription = (
-  componentDestroyed: Subject<void>,
-  stateSetter: Dispatch<SetStateAction<FolderTypes[]>>
-) => void
