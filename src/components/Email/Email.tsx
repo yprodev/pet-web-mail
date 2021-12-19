@@ -1,4 +1,6 @@
 import { FC } from 'react'
+import { format } from 'date-fns'
+
 import { Typography, Card, CardContent, Box, Chip, Stack, Divider } from '@mui/material'
 import DoneIcon from '@mui/icons-material/Done'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -40,7 +42,8 @@ const Email: FC<EmailProps> = ({ email }) => {
             {email.header.subject}
           </Typography>
           <Typography variant='body1' component='p' sx={{ display: 'flex' }}>
-            {email.header.from} sent this message on {email.header.date}
+            {email.header.from} sent this message on{' '}
+            {format(new Date(email.header.date), 'do MMMM yyyy')}
           </Typography>
           <Divider />
         </Box>

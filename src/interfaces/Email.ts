@@ -7,7 +7,7 @@ export interface EmailShort {
   header: {
     subject: string
     from: string
-    date: number //FIXME: Date type in UTC format
+    date: string
     preview: string
   }
 }

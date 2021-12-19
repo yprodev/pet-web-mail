@@ -38,7 +38,10 @@ export const emailsRequest$: EmailsRequest = () =>
   observableHttpClient.get<EmailShort[]>('emails').pipe(
     take(1),
     map<EmailShort[], EmailShort[]>((emails) =>
-      emails.sort((firstDate, secondElement) => secondElement.header.date - firstDate.header.date)
+      emails.sort(
+        (firstDate, secondElement) =>
+          new Date(secondElement.header.date).getDate() - new Date(firstDate.header.date).getDate()
+      )
     )
   )
 

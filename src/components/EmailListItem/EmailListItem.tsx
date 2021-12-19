@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { format } from 'date-fns'
 import { Box } from '@mui/system'
 import { Typography } from '@mui/material'
 import CircleIcon from '@mui/icons-material/Circle'
@@ -6,7 +7,7 @@ import CircleIcon from '@mui/icons-material/Circle'
 interface EmailListItemProps {
   emailId: string
   from: string
-  date: number //FIXME: Should be date of UTC format
+  date: string
   subject: string
   isRead: boolean
   preview: string
@@ -56,7 +57,7 @@ const EmailListItem: FC<EmailListItemProps> = ({
             color='background.paper'
             sx={{ display: 'flex' }}
           >
-            {date}
+            {format(new Date(date), 'do MMMM yyyy')}
           </Typography>
         </Box>
       </Box>

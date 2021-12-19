@@ -35,7 +35,6 @@ const useViewArea = (): ViewAreaHook => {
 
   useEffect(() => {
     selectedEmailId$.pipe(takeUntil(componentDestroyed$)).subscribe((emailId) => {
-      console.log('new email id', emailId)
       setEmailId(emailId)
     })
 
